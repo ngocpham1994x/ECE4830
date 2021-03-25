@@ -18,18 +18,25 @@ peaksInRadians = sort([-peaksInRadians peaksInRadians]);
 whaleZeros = exp(1i*2*pi*peaksInRadians);
 whaleNum = poly(whaleZeros); % determine coefficients for filter
 
-r = 0.99;
+r = 0.99; % for putting poles very close to zeros
 whalePoles = r*exp(1i*2*pi*peaksInRadians);
 whaleDen = poly(whalePoles); % determine coefficients for filter
+
+sys = tf(whaleNum,whaleDen);
+figure(18);
+pzmap(sys);
+figure;
+freqz(whaleNum,whaleDen);
+title('Filter');
 
 y6_after = filter(whaleNum,whaleDen,y6);
 y6_after_fft = abs(fftshift(fft(y6_after)));
 
 N2 = length(y6_after);
 x2 = -1/2 : 1/N2 : (1/2-1/N2); % "normalize" x-axis of y6_after_fft, though y6 & y6_after are same size
-figure(18);
+figure(19);
 plot(x2,y6_after_fft);
 title('Filtered Boat & Whale signal, noise sound is filtered');
 
 
-soundsc(y6_after,Fs);
+% soundsc(y6_after,Fs);
